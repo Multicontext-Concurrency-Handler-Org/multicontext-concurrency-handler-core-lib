@@ -1,12 +1,15 @@
 package domain.entity;
 
 import domain.entity.vos.process.ConcurrencyVO;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.util.List;
 
-@Data
+@AllArgsConstructor
+@Getter
 public class Process {
     private String name;
     private Integer version;
