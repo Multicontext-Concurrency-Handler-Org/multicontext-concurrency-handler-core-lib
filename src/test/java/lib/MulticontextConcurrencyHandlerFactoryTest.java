@@ -1,19 +1,17 @@
 package lib;
 
-import domain.event.IEventSubscriber;
-import domain.repository.ILockRepository;
-import domain.repository.IProcessRepository;
-import domain.repository.PersistenceContext;
+import domain.entity.vos.events.DomainErrorEventVO;
+import domain.event.EventPublisher;
+import domain.event.impls.DomainErrorEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.TestDomainErrorEventSubscriber;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class MulticontextConcurrencyHandlerFactoryTest {
@@ -26,8 +24,12 @@ class MulticontextConcurrencyHandlerFactoryTest {
                 MulticontextConcurrencyHandlerFactory.create(
                         null,
                         null,
-                        new ArrayList<>()
+                        new ArrayList<>() {{
+                            add(new TestDomainErrorEventSubscriber());
+                        }}
                 );
+
+                EventPublisher.publishEvent(new DomainErrorEvent(new DomainErrorEventVO()));
             });
         }
     }
