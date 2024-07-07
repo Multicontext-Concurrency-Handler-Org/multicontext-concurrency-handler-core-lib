@@ -4,13 +4,13 @@ import domain.entity.vos.events.*;
 import domain.enums.DomainEventType;
 import domain.event.DomainEvent;
 import domain.event.IEventSubscriber;
+import org.junit.jupiter.api.Assertions;
 
 public class TestDomainErrorEventSubscriber implements IEventSubscriber  {
     @Override
     public void notify(DomainEvent event) {
-        if(!(event.getContent() instanceof DomainErrorEventVO)) {
-            throw new RuntimeException("invalid event content");
-        }
+        Assertions.assertEquals(DomainEventType.DOMAIN_ERROR, event.getType());
+        Assertions.assertInstanceOf(DomainErrorEventVO.class, event.getContent());
     }
 
     @Override
