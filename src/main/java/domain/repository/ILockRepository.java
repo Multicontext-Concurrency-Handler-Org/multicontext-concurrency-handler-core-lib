@@ -1,8 +1,10 @@
 package domain.repository;
 
 import domain.entity.Lock;
+import domain.entity.Process;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ILockRepository {
     /**
@@ -36,11 +38,25 @@ public interface ILockRepository {
      */
     Lock updateToRunning(String lockId);
 
+    /**
+     * Find lock
+     *
+     * @return      The found lock
+     */
+    Optional<Lock> findLockById(String lockId);
+
 
     /**
-     * Query pending lock requests where status equals to pending order by priority
+     * Query locks where status equals to pending order by priority
      *
      * @return      The lock id list
      */
-    List<String> getPendingConcurrentProcessOrderedByPriority(String lockId);
+    List<String> getConcurrentLocksPendingOrderedByPriority(List<Process> concurrentProcesses);
+
+    /**
+     * Get all locks with status equal pending order by priority
+     *
+     * @return      All pending locks order by priority
+     */
+    List<String> getAllPendingLocksOrderedByPriority();
 }

@@ -11,19 +11,14 @@ import lib.commands.user.usecase.AcquireLockSyncUseCase;
 import lib.commands.user.usecase.SendAcquireLockEventUseCase;
 import domain.repository.PersistenceContext;
 import lib.commands.user.usecase.SendReleaseLockEventUseCase;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 class MulticontextConcurrencyHandler implements IMulticontextConcurrencyHandlerAPI {
     private final SendAcquireLockEventUseCase sendAcquireLockEventUseCase;
     private final SendReleaseLockEventUseCase sendReleaseLockEventUseCase;
     private final AcquireLockSyncUseCase acquireLockSyncUseCase;
     private final AcquireOpportunityUseCase acquireOpportunityUseCase;
-
-    MulticontextConcurrencyHandler(PersistenceContext persistenceContext) {
-        this.sendAcquireLockEventUseCase = new SendAcquireLockEventUseCase();
-        this.sendReleaseLockEventUseCase = new SendReleaseLockEventUseCase();
-        this.acquireLockSyncUseCase = new AcquireLockSyncUseCase(persistenceContext);
-        this.acquireOpportunityUseCase = new AcquireOpportunityUseCase(persistenceContext);
-    }
 
     @Override
     public void sendAcquireLockEvent(SendAcquireLockEventDTO request) {
