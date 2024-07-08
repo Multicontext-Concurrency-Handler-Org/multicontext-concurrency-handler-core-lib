@@ -2,6 +2,9 @@
 
 By submitting a pull request or a patch, you represent that you have the right to license your contribution to the MCH Core Lib project owners and the community, agree that your contributions are licensed under the MCH Core Lib license, and agree to future changes to the licensing.
 
+## MCH Architecture
+<img src="./docs/images/general-architecture-image.png"  alt="MCH Architecture"/>
+
 ## Logs
 
 The general recommendation is not introduce logs that you didn't use during your development process or don't attend to any specific use case that will be used on production
