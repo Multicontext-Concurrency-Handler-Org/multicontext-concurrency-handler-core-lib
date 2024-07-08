@@ -20,14 +20,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 @ExtendWith(MockitoExtension.class)
-class MulticontextConcurrencyHandlerFactoryTest {
+class MCHFactoryTest {
     @Nested
-    class CreateMulticontextConcurrencyHandler {
+    class CreateMCH {
         @Test
-        @DisplayName("MCHFactory deals with null entries")
+        @DisplayName("MCHFactory should deals with null entries")
         void nullEntriesCreate() {
             Assertions.assertThrowsExactly(NullPointerException.class, () -> {
-                MulticontextConcurrencyHandlerFactory.create(
+                MCHFactory.create(
                         null,
                         null,
                         null
@@ -36,7 +36,7 @@ class MulticontextConcurrencyHandlerFactoryTest {
 
             var processRepository = new InMemoryProcessRepository();
             Assertions.assertThrowsExactly(NullPointerException.class, () -> {
-                MulticontextConcurrencyHandlerFactory.create(
+                MCHFactory.create(
                         processRepository,
                         null,
                         null
@@ -45,7 +45,7 @@ class MulticontextConcurrencyHandlerFactoryTest {
 
             var lockRepository = new InMemoryLockRepository();
             Assertions.assertThrowsExactly(NullPointerException.class,() -> {
-                MulticontextConcurrencyHandlerFactory.create(
+                MCHFactory.create(
                         processRepository,
                         lockRepository,
                         null
@@ -54,7 +54,7 @@ class MulticontextConcurrencyHandlerFactoryTest {
 
             var eventSubscribers = new ArrayList<IEventSubscriber>();
             Assertions.assertDoesNotThrow(() -> {
-                MulticontextConcurrencyHandlerFactory.create(
+                MCHFactory.create(
                         processRepository,
                         lockRepository,
                         eventSubscribers
@@ -68,7 +68,7 @@ class MulticontextConcurrencyHandlerFactoryTest {
             ));
 
             Assertions.assertDoesNotThrow(() -> {
-                MulticontextConcurrencyHandlerFactory.create(
+                MCHFactory.create(
                         processRepository,
                         lockRepository,
                         eventSubscribers
@@ -77,7 +77,7 @@ class MulticontextConcurrencyHandlerFactoryTest {
         }
 
         @Test
-        @DisplayName("MCHFactory register event subscribers")
+        @DisplayName("MCHFactory should register event subscribers")
         void example() {
             var originalEventContent = new DomainErrorEventVO(
                     DomainErrorType.INVALID_STATE,
@@ -93,7 +93,7 @@ class MulticontextConcurrencyHandlerFactoryTest {
                     }
             );
 
-            MulticontextConcurrencyHandlerFactory.create(
+            MCHFactory.create(
                     new InMemoryProcessRepository(),
                     new InMemoryLockRepository(),
                     new ArrayList<>() {

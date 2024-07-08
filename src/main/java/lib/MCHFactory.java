@@ -6,20 +6,19 @@ import domain.repository.ILockRepository;
 import domain.repository.IProcessRepository;
 import domain.repository.PersistenceContext;
 import domain.services.LockService;
-import lib.commands.engine.usecase.AcquireOpportunityUseCase;
-import lib.commands.user.usecase.AcquireLockSyncUseCase;
-import lib.commands.user.usecase.SendAcquireLockEventUseCase;
-import lib.commands.user.usecase.SendReleaseLockEventUseCase;
+import lib.usecase.impls.AcquireLockRequestUseCase;
+import lib.usecase.impls.AcquireOpportunityUseCase;
+import lib.usecase.impls.DeadlockCleanupUseCase;
+import lib.usecase.impls.ReleaseLockRequestUseCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class MulticontextConcurrencyHandlerFactory {
+public final class MCHFactory {
     private static final Logger logger = LogManager.getLogger();
-    public static IMulticontextConcurrencyHandlerAPI create(
+    public static IMulticontextConcurrencyHandler create(
             IProcessRepository processRepository,
             ILockRepository lockRepository,
             List<IEventSubscriber> eventSubscribers
@@ -33,16 +32,14 @@ public final class MulticontextConcurrencyHandlerFactory {
         }
 
         EventPublisher.registerSubscribers(eventSubscribers);
-
         var persistenceContext = new PersistenceContext(processRepository, lockRepository);
-
         var lockService = new LockService(persistenceContext);
 
-        return new MulticontextConcurrencyHandler(
-                new SendAcquireLockEventUseCase(),
-                new SendReleaseLockEventUseCase(),
-                new AcquireLockSyncUseCase(persistenceContext),
-                new AcquireOpportunityUseCase(lockService)
+        return new MCH(
+            new AcquireOpportunityUseCase(lockService),
+            new AcquireLockRequestUseCase(persistenceContext),
+            new ReleaseLockRequestUseCase(persistenceContext),
+            new DeadlockCleanupUseCase(persistenceContext)
         );
     }
 }

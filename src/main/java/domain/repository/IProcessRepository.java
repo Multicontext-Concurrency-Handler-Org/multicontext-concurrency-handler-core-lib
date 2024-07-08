@@ -3,6 +3,7 @@ package domain.repository;
 import domain.entity.Process;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IProcessRepository {
     /**
@@ -12,4 +13,11 @@ public interface IProcessRepository {
      * @return     The list of concurrent processes
      */
     List<Process> getConcurrentProcesses(Process process);
+
+    /**
+     * Find process by name
+     * @param process processName
+     * @return process if exists
+     */
+    Optional<Process> findProcessByName(String process);
 }

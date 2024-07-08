@@ -6,6 +6,7 @@ import domain.repository.IProcessRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class InMemoryProcessRepository implements IProcessRepository {
@@ -20,5 +21,10 @@ public class InMemoryProcessRepository implements IProcessRepository {
         return process.getIsStopTheWorld() ?
                 this.processes :
                 process.getConcurrencies().stream().map((ConcurrencyVO::process)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Process> findProcessByName(String process) {
+        return processes.stream().findAny().filter(p -> p.getName().equals(process));
     }
 }
