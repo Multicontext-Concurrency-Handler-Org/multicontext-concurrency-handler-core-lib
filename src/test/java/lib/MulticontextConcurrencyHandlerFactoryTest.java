@@ -3,7 +3,6 @@ package lib;
 import domain.entity.vos.events.DomainErrorEventVO;
 import domain.enums.DomainErrorType;
 import domain.enums.DomainEventType;
-import domain.event.DomainEvent;
 import domain.event.EventPublisher;
 import domain.event.IEventSubscriber;
 import domain.event.impls.DomainErrorEvent;

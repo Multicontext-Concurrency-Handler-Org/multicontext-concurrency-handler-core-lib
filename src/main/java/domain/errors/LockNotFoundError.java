@@ -3,7 +3,6 @@ package domain.errors;
 import domain.entity.vos.events.DomainErrorEventVO;
 import domain.enums.DomainErrorType;
 import domain.event.impls.DomainErrorEvent;
-import lombok.Builder;
 
 import java.time.Instant;
 
