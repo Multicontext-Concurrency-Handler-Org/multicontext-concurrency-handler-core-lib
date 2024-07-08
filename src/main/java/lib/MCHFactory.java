@@ -2,10 +2,17 @@ package lib;
 
 import domain.event.EventPublisher;
 import domain.event.IEventSubscriber;
+import domain.event.impls.DomainErrorEvent;
+import domain.event.impls.LockAcquiredEvent;
+import domain.event.impls.StateChangeEvent;
 import domain.repository.ILockRepository;
 import domain.repository.IProcessRepository;
 import domain.repository.PersistenceContext;
 import domain.services.LockService;
+import lib.subscribers.DefaultErrorSubscriber;
+import lib.subscribers.DefaultLockAcquiredSubscriber;
+import lib.subscribers.DefaultStateChangeSubscriber;
+import lib.subscribers.producer.IProducer;
 import lib.usecase.impls.AcquireLockRequestUseCase;
 import lib.usecase.impls.AcquireOpportunityUseCase;
 import lib.usecase.impls.DeadlockCleanupUseCase;
@@ -13,6 +20,7 @@ import lib.usecase.impls.ReleaseLockRequestUseCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,17 +29,23 @@ public final class MCHFactory {
     public static IMulticontextConcurrencyHandler create(
             IProcessRepository processRepository,
             ILockRepository lockRepository,
-            List<IEventSubscriber> eventSubscribers
+            IProducer<DomainErrorEvent> domainErrorEventProducer,
+            IProducer<LockAcquiredEvent> lockAcquiredEventProducer,
+            IProducer<StateChangeEvent> stateChangeEventProducer
     ) {
         Objects.requireNonNull(processRepository, "Required argument IProcessRepository processRepository");
-        Objects.requireNonNull(processRepository, "Required argument ILockRepository lockRepository");
-        Objects.requireNonNull(processRepository, "Required argument List<IEventSubscriber> eventSubscribers");
+        Objects.requireNonNull(lockRepository, "Required argument ILockRepository lockRepository");
+        Objects.requireNonNull(domainErrorEventProducer, "Required argument IProducer<DomainErrorEvent> domainErrorEventProducer");
+        Objects.requireNonNull(lockAcquiredEventProducer, "Required argument IProducer<LockAcquiredEvent> lockAcquiredEventProducer");
+        Objects.requireNonNull(stateChangeEventProducer, "Required argument IProducer<StateChangeEvent> stateChangeEventProducer");
 
-        if(eventSubscribers.isEmpty()) {
-            logger.warn("No event subscribers was provided, please notice that this only should be done for development or testing reasons");
-        }
-
+        var eventSubscribers = new ArrayList<IEventSubscriber>() {{
+            add(new DefaultErrorSubscriber(domainErrorEventProducer));
+            add(new DefaultLockAcquiredSubscriber(lockAcquiredEventProducer));
+            add(new DefaultStateChangeSubscriber(stateChangeEventProducer));
+        }};
         EventPublisher.registerSubscribers(eventSubscribers);
+
         var persistenceContext = new PersistenceContext(processRepository, lockRepository);
         var lockService = new LockService(persistenceContext);
 

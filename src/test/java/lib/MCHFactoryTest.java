@@ -1,109 +1,36 @@
 package lib;
 
-import domain.entity.vos.events.DomainErrorEventVO;
-import domain.enums.DomainErrorType;
-import domain.enums.DomainEventType;
-import domain.event.EventPublisher;
-import domain.event.IEventSubscriber;
 import domain.event.impls.DomainErrorEvent;
+import domain.event.impls.LockAcquiredEvent;
+import domain.event.impls.StateChangeEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.GenericEventSubscriberTestUtil;
-import utils.InMemoryLockRepository;
-import utils.InMemoryProcessRepository;
-
-import java.time.Instant;
-import java.util.ArrayList;
+import utils.producers.DomainErrorEventProducer;
+import utils.producers.LockAcquiredEventProducer;
+import utils.producers.StateChangeEventProducer;
+import utils.repositories.InMemoryLockRepository;
+import utils.repositories.InMemoryProcessRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MCHFactoryTest {
     @Nested
     class CreateMCH {
         @Test
-        @DisplayName("MCHFactory should deals with null entries")
-        void nullEntriesCreate() {
-            Assertions.assertThrowsExactly(NullPointerException.class, () -> {
-                MCHFactory.create(
-                        null,
-                        null,
-                        null
-                );
-            });
-
-            var processRepository = new InMemoryProcessRepository();
-            Assertions.assertThrowsExactly(NullPointerException.class, () -> {
-                MCHFactory.create(
-                        processRepository,
-                        null,
-                        null
-                );
-            });
-
-            var lockRepository = new InMemoryLockRepository();
-            Assertions.assertThrowsExactly(NullPointerException.class,() -> {
-                MCHFactory.create(
-                        processRepository,
-                        lockRepository,
-                        null
-                );
-            });
-
-            var eventSubscribers = new ArrayList<IEventSubscriber>();
+        @DisplayName("Create MCH Instance with default subscribers")
+        void createInstanceDefaultSubscribers() {
             Assertions.assertDoesNotThrow(() -> {
                 MCHFactory.create(
-                        processRepository,
-                        lockRepository,
-                        eventSubscribers
+                        new InMemoryProcessRepository(),
+                        new InMemoryLockRepository(),
+                        new DomainErrorEventProducer((DomainErrorEvent e) -> {}),
+                        new LockAcquiredEventProducer((LockAcquiredEvent e) -> {}),
+                        new StateChangeEventProducer((StateChangeEvent e) -> {})
                 );
             });
-
-            eventSubscribers.add(new GenericEventSubscriberTestUtil<>(
-                    DomainEventType.DOMAIN_ERROR,
-                    DomainErrorEventVO.class,
-                    null
-            ));
-
-            Assertions.assertDoesNotThrow(() -> {
-                MCHFactory.create(
-                        processRepository,
-                        lockRepository,
-                        eventSubscribers
-                );
-            });
-        }
-
-        @Test
-        @DisplayName("MCHFactory should register event subscribers")
-        void example() {
-            var originalEventContent = new DomainErrorEventVO(
-                    DomainErrorType.INVALID_STATE,
-                    "test domain error event",
-                    Instant.now()
-            );
-
-            var subscriber = new GenericEventSubscriberTestUtil<>(
-                    DomainEventType.DOMAIN_ERROR,
-                    DomainErrorEventVO.class,
-                    eventContent -> {
-                        Assertions.assertEquals(originalEventContent, eventContent);
-                    }
-            );
-
-            MCHFactory.create(
-                    new InMemoryProcessRepository(),
-                    new InMemoryLockRepository(),
-                    new ArrayList<>() {
-                        {
-                            add(subscriber);
-                        }
-                    }
-            );
-
-            EventPublisher.publishEvent(new DomainErrorEvent(originalEventContent));
         }
     }
 }

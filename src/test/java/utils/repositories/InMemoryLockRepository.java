@@ -1,4 +1,4 @@
-package utils;
+package utils.repositories;
 
 import domain.entity.Lock;
 import domain.entity.Process;

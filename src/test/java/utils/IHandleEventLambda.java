@@ -1,5 +1,5 @@
 package utils;
 
-public interface IHandleEventNotifyLambda<T> {
+public interface IHandleEventLambda<T> {
     void execute(T eventContent);
 }

@@ -1,4 +1,4 @@
-package utils;
+package utils.repositories;
 
 import domain.entity.Process;
 import domain.entity.vos.process.ConcurrencyVO;
