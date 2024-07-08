@@ -18,7 +18,7 @@ public interface ILockRepository {
     /**
      * Query if there's any lock on the database where
      * status equals to running and process is part of the
-     * lockId origin process concurrency list
+     * lock origin process concurrency list
      * <h4>Process Lock Level</h4>
      * if there is any concurrent process lock executing that has lock level of process it will return true
      * <h4>Data Lock Level</h4>
@@ -27,16 +27,7 @@ public interface ILockRepository {
      *
      * @return      true if there is a concurrent lock running
      */
-    Boolean hasConcurrentProcessRunning(String lockId);
-
-    /**
-     * Update status to running and calculates expiresAt based on lifetime configured on the process
-     * <p/>
-     * lock.expiresAt = now() + process.lifetime
-     *
-     * @return      The lock updated
-     */
-    Lock updateToRunning(String lockId);
+    Boolean hasConcurrentProcessRunning(Lock lock);
 
     /**
      * Find lock
@@ -45,18 +36,25 @@ public interface ILockRepository {
      */
     Optional<Lock> findLockById(String lockId);
 
+    /**
+     * Upsert lock
+     *
+     * @param lock
+     */
+    void upsert(Lock lock);
+
 
     /**
      * Query locks where status equals to pending order by priority
      *
      * @return      The lock id list
      */
-    List<String> getConcurrentLocksPendingOrderedByPriority(List<Process> concurrentProcesses);
+    List<Lock> getConcurrentLocksPendingOrderedByPriority(List<Process> concurrentProcesses);
 
     /**
      * Get all locks with status equal pending order by priority
      *
      * @return      All pending locks order by priority
      */
-    List<String> getAllPendingLocksOrderedByPriority();
+    List<Lock> getAllPendingLocksOrderedByPriority();
 }

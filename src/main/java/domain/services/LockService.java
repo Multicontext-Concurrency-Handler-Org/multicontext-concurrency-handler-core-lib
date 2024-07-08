@@ -27,20 +27,13 @@ public class LockService {
             return;
         }
 
-        if(Boolean.TRUE.equals(persistenceContext.lockRepository().hasConcurrentProcessRunning(lockId))) {
-            logger.debug("Won't be able to start running since there is a concurrent process running");
+        var lockOpt = this.persistenceContext.lockRepository().findLockById(lockId);
+        if(lockOpt.isEmpty()) {
+            logger.error(String.format("No lock was found by id %s", lockId));
             return;
         }
 
-        Lock acquiredLock = this.persistenceContext.lockRepository().updateToRunning(lockId);
-        logger.info(String.format("Lock %s started running", lockId));
-
-        var acquireLockEventVO = AcquireLockEventVO.fromEntity(acquiredLock);
-        var lockAcquiredEventVO = new LockAcquiredEventVO(lockId, acquireLockEventVO);
-        var lockAcquiredEvent = new LockAcquiredEvent(lockAcquiredEventVO);
-
-        EventPublisher.publishEvent(lockAcquiredEvent);
-        logger.info(String.format("Lock %s lock acquired event published", lockId));
+        this.executeAcquireOpportunityFor(lockOpt.get());
     }
 
     public void lockReleasedAcquireOpportunity(String lockId) {
@@ -55,12 +48,32 @@ public class LockService {
             return;
         }
 
-        List<String> concurrentLocksPending = getPendingConcurrentLocksOrderedByPriority(lock.get());
+        var concurrentLocksPending = getPendingConcurrentLocksOrderedByPriority(lock.get());
         Objects.requireNonNull(concurrentLocksPending, "LockService.getPendingConcurrentLocksOrderedByPriority(Lock lock) should never return null");
-        concurrentLocksPending.forEach(this::lockCreatedAcquireOpportunity);
+        concurrentLocksPending.forEach(this::executeAcquireOpportunityFor);
     }
 
-    private List<String> getPendingConcurrentLocksOrderedByPriority(Lock lock) {
+    private void executeAcquireOpportunityFor(Lock lock) {
+        if(Boolean.TRUE.equals(persistenceContext.lockRepository().hasConcurrentProcessRunning(lock))) {
+            logger.debug("Won't be able to start running since there is a concurrent process running");
+            return;
+        }
+
+        lock.startRunning();
+        persistenceContext.lockRepository().upsert(lock);
+        logger.info(String.format("Lock %s started running", lock.getId()));
+
+        var acquireLockEventVO = AcquireLockEventVO.fromEntity(lock);
+        var lockAcquiredEventVO = new LockAcquiredEventVO(lock.getId(), acquireLockEventVO);
+        var lockAcquiredEvent = new LockAcquiredEvent(lockAcquiredEventVO);
+
+        EventPublisher.publishEvent(lockAcquiredEvent);
+        logger.info(String.format("Lock %s lock acquired event published", lock.getId()));
+    }
+
+
+
+    private List<Lock> getPendingConcurrentLocksOrderedByPriority(Lock lock) {
         if(lock.getProcess().getIsStopTheWorld()) {
             logger.trace("STW processes don't need concurrency filtering");
             return getAllPendingLocksOrderedByPriority();
@@ -81,7 +94,7 @@ public class LockService {
         return concurrentLocksPending;
     }
 
-    private List<String> getAllPendingLocksOrderedByPriority() {
+    private List<Lock> getAllPendingLocksOrderedByPriority() {
         var concurrentLocksPending = this.persistenceContext.lockRepository().getAllPendingLocksOrderedByPriority();
         if(Objects.isNull(concurrentLocksPending)) {
             logger.warn("Unexpected behaviour ILockRepository.getAllPendingLocksOrderedByPriority() returned null instead of an empty list");
