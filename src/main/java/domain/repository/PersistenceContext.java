@@ -9,6 +9,10 @@ public record PersistenceContext(
 ) {
     private static final Logger logger = LogManager.getLogger();
 
+    public interface IAccessExclusiveLockLambda {
+        void execute();
+    }
+
     /**
      * This method enable working with multithreading, multiprocessing or even multi instances (like in kubernetes)
      * without risking the concurrency model
