@@ -1,7 +1,7 @@
 package lib.usecase;
 
-import lib.errors.MCHConstraintViolation;
-import lib.errors.MCHConstraintViolationException;
+import lib.exceptions.MCHConstraintViolation;
+import lib.exceptions.MCHConstraintViolationException;
 
 import java.util.List;
 

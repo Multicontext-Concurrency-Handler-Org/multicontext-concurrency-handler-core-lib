@@ -2,7 +2,7 @@ package lib.usecase.impls;
 
 import domain.repository.PersistenceContext;
 import lib.dto.ConsumeDeadlockCleanupEventDTO;
-import lib.errors.MCHConstraintViolation;
+import lib.exceptions.MCHConstraintViolation;
 import lib.usecase.MCHUseCase;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;

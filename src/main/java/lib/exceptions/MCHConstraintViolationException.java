@@ -1,4 +1,4 @@
-package lib.errors;
+package lib.exceptions;
 
 
 public class MCHConstraintViolationException extends Exception {

@@ -1,6 +1,6 @@
 package lib;
 
-import lib.errors.MCHConstraintViolationException;
+import lib.exceptions.MCHConstraintViolationException;
 import lib.usecase.impls.AcquireLockRequestUseCase;
 import lib.usecase.impls.AcquireOpportunityUseCase;
 import lib.usecase.impls.DeadlockCleanupUseCase;
