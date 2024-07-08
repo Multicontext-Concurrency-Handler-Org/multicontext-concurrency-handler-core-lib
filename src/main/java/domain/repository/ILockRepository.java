@@ -1,7 +1,6 @@
 package domain.repository;
 
 import domain.entity.Lock;
-import domain.entity.Process;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +26,7 @@ public interface ILockRepository {
      *
      * @return      true if there is a concurrent lock running
      */
-    Boolean hasConcurrentProcessRunning(Lock lock);
+    Boolean hasConcurrentProcessRunning(Lock lock, List<String> concurrentProcesses);
 
     /**
      * Find lock
@@ -49,7 +48,7 @@ public interface ILockRepository {
      *
      * @return      The lock id list
      */
-    List<Lock> getConcurrentLocksPendingOrderedByPriority(List<Process> concurrentProcesses);
+    List<Lock> getConcurrentLocksPendingOrderedByPriority(List<String> concurrentProcesses);
 
     /**
      * Get all locks with status equal pending order by priority
@@ -57,4 +56,16 @@ public interface ILockRepository {
      * @return      All pending locks order by priority
      */
     List<Lock> getAllPendingLocksOrderedByPriority();
+
+    /**
+     * Must lock the "lock table / collection" so that no other instance or threads can
+     * neither query, update nor create new values to it until this lock is released
+     */
+    void acquireAccessExclusiveLock();
+
+    /**
+     * Must unlock the "lock table / collection" so that other instances or threads can
+     * query, update and create new values to it since this lock was released
+     */
+    void releaseAccessExclusiveLock();
 }

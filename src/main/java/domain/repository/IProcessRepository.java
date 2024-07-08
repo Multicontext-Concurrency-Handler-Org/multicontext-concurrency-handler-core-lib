@@ -12,7 +12,7 @@ public interface IProcessRepository {
      * @param process Process that if its executing blocks the concurrent processes
      * @return     The list of concurrent processes
      */
-    List<Process> getConcurrentProcesses(Process process);
+    List<String> getConcurrentProcesses(Process process);
 
     /**
      * Find process by name

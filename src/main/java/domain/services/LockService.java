@@ -54,24 +54,31 @@ public class LockService {
     }
 
     private void executeAcquireOpportunityFor(Lock lock) {
-        if(Boolean.TRUE.equals(persistenceContext.lockRepository().hasConcurrentProcessRunning(lock))) {
-            logger.debug("Won't be able to start running since there is a concurrent process running");
-            return;
+        var concurrentProcesses = this.persistenceContext.processRepository().getConcurrentProcesses(lock.getProcess());
+        if(Objects.isNull(concurrentProcesses)) {
+            logger.warn("Unexpected behaviour IProcessRepository.getConcurrentProcesses(Process process) returned null instead of an empty list");
+            concurrentProcesses = new ArrayList<>();
         }
 
-        lock.startRunning();
-        persistenceContext.lockRepository().upsert(lock);
-        logger.info(String.format("Lock %s started running", lock.getId()));
+        final var closureParameterConcurrentProcess = concurrentProcesses;
+        this.persistenceContext.executeWithinAccessExclusiveLockContext(() -> {
+            if(Boolean.TRUE.equals(persistenceContext.lockRepository().hasConcurrentProcessRunning(lock, closureParameterConcurrentProcess))) {
+                logger.debug("Won't be able to start running since there is a concurrent process running");
+                return;
+            }
 
-        var acquireLockEventVO = AcquireLockEventVO.fromEntity(lock);
-        var lockAcquiredEventVO = new LockAcquiredEventVO(lock.getId(), acquireLockEventVO);
-        var lockAcquiredEvent = new LockAcquiredEvent(lockAcquiredEventVO);
+            lock.startRunning();
+            persistenceContext.lockRepository().upsert(lock);
+            logger.info(String.format("Lock %s started running", lock.getId()));
 
-        EventPublisher.publishEvent(lockAcquiredEvent);
-        logger.info(String.format("Lock %s lock acquired event published", lock.getId()));
+            var acquireLockEventVO = AcquireLockEventVO.fromEntity(lock);
+            var lockAcquiredEventVO = new LockAcquiredEventVO(lock.getId(), acquireLockEventVO);
+            var lockAcquiredEvent = new LockAcquiredEvent(lockAcquiredEventVO);
+
+            EventPublisher.publishEvent(lockAcquiredEvent);
+            logger.info(String.format("Lock %s lock acquired event published", lock.getId()));
+        });
     }
-
-
 
     private List<Lock> getPendingConcurrentLocksOrderedByPriority(Lock lock) {
         if(Boolean.TRUE.equals(lock.getProcess().getIsStopTheWorld())) {

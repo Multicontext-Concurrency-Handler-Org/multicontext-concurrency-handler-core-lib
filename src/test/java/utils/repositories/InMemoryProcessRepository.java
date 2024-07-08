@@ -17,10 +17,10 @@ public class InMemoryProcessRepository implements IProcessRepository {
     }
 
     @Override
-    public List<Process> getConcurrentProcesses(Process process) {
+    public List<String> getConcurrentProcesses(Process process) {
         return process.getIsStopTheWorld() ?
-                this.processes :
-                process.getConcurrencies().stream().map((ConcurrencyVO::process)).collect(Collectors.toList());
+                this.processes.stream().map(Process::getName).collect(Collectors.toList()) :
+                process.getConcurrencies().stream().map(concurrencyVO -> concurrencyVO.process().getName()).collect(Collectors.toList());
     }
 
     @Override

@@ -24,11 +24,11 @@ public class InMemoryLockRepository implements ILockRepository {
     }
 
     @Override
-    public Boolean hasConcurrentProcessRunning(Lock lock) {
+    public Boolean hasConcurrentProcessRunning(Lock lock, List<String> concurrentProcesses) {
         return this.locks.stream().anyMatch(l ->
                 l.getStatus().equals(LockStatus.RUNNING)
-                        && lock.getProcess().getConcurrencies().stream().anyMatch(
-                        cp -> cp.process().getName().equals(l.getProcess().getName())
+                        && concurrentProcesses.stream().anyMatch(
+                        cp -> cp.equals(l.getProcess().getName())
                 )
         );
     }
@@ -48,11 +48,11 @@ public class InMemoryLockRepository implements ILockRepository {
     }
 
     @Override
-    public List<Lock> getConcurrentLocksPendingOrderedByPriority(List<Process> concurrentProcesses) {
+    public List<Lock> getConcurrentLocksPendingOrderedByPriority(List<String> concurrentProcesses) {
         return this.locks.stream().filter(
                         lock -> lock.getStatus().equals(LockStatus.RUNNING)
                                 && concurrentProcesses.stream().anyMatch(
-                                cP -> cP.getName().equals(lock.getProcess().getName())
+                                cP -> cP.equals(lock.getProcess().getName())
                         )
                 ).sorted(Comparator.comparingInt(l -> l.getProcess().getPriorityLevel()))
                 .collect(Collectors.toList());
@@ -63,5 +63,15 @@ public class InMemoryLockRepository implements ILockRepository {
         return this.locks.stream()
                 .sorted(Comparator.comparingInt(l -> l.getProcess().getPriorityLevel()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void acquireAccessExclusiveLock() {
+
+    }
+
+    @Override
+    public void releaseAccessExclusiveLock() {
+
     }
 }
