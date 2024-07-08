@@ -27,29 +27,4 @@ public class AcquireOpportunityUseCase extends MCHUseCase<ConsumeStateChangeEven
         }
         logger.info(String.format("AcquireOpportunityUseCase executed for %d locks", request.locks().size()));
     }
-
-    @Override
-    protected List<MCHConstraintViolation> validate(ConsumeStateChangeEventDTO dto) {
-        // @todo - change validation for a validation library PLEASE
-        return new ArrayList<>() {{
-            if(Objects.isNull(dto)) {
-                add(new MCHConstraintViolation("ConsumeStateChangeEventDTO can't be null"));
-            } else {
-                if(Objects.isNull(dto.version())) {
-                    add(new MCHConstraintViolation("ConsumeStateChangeEventDTO.version can't be null"));
-                } else if(dto.version() < 1) {
-                    add(new MCHConstraintViolation("ConsumeStateChangeEventDTO.version must be greater than zero"));
-                }
-
-                if(Objects.isNull(dto.event())) {
-                    add(new MCHConstraintViolation("ConsumeStateChangeEventDTO.event can't be null"));
-                }
-
-                if(Objects.isNull(dto.locks())) {
-                    add(new MCHConstraintViolation("ConsumeStateChangeEventDTO.locks can't be null"));
-                }
-            }
-        }};
-    }
-
 }

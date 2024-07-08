@@ -19,9 +19,4 @@ public class ReleaseLockRequestUseCase extends MCHUseCase<ConsumeReleaseLockDTO>
     protected void execute(ConsumeReleaseLockDTO dto) {
 
     }
-
-    @Override
-    protected List<MCHConstraintViolation> validate(ConsumeReleaseLockDTO dto) {
-        return null;
-    }
 }

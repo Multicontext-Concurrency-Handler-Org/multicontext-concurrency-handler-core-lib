@@ -21,23 +21,4 @@ public class AcquireLockRequestUseCase extends MCHUseCase<ConsumeAcquireLockDTO>
     protected void execute(ConsumeAcquireLockDTO acquireLockDTO) {
 
     }
-
-    @Override
-    protected List<MCHConstraintViolation> validate(ConsumeAcquireLockDTO dto) {
-        return new ArrayList<>() {{
-            if(Objects.isNull(dto)) {
-                add(new MCHConstraintViolation("ConsumeAcquireLockDTO can't be null"));
-            } else {
-                if(Objects.isNull(dto.version())) {
-                    add(new MCHConstraintViolation("ConsumeAcquireLockDTO.version can't be null"));
-                } else if(dto.version() < 1) {
-                    add(new MCHConstraintViolation("ConsumeAcquireLockDTO.version must be greater than zero"));
-                }
-
-                if(Objects.isNull(dto.process())) {
-                    add(new MCHConstraintViolation("ConsumeAcquireLockDTO.process can't be null"));
-                }
-            }
-        }};
-    }
 }

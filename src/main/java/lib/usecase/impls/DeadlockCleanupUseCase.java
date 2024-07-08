@@ -19,9 +19,4 @@ public class DeadlockCleanupUseCase extends MCHUseCase<ConsumeDeadlockCleanupEve
     protected void execute(ConsumeDeadlockCleanupEventDTO dto) {
 
     }
-
-    @Override
-    protected List<MCHConstraintViolation> validate(ConsumeDeadlockCleanupEventDTO dto) {
-        return null;
-    }
 }
