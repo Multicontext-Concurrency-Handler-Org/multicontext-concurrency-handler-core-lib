@@ -74,7 +74,7 @@ public class LockService {
 
 
     private List<Lock> getPendingConcurrentLocksOrderedByPriority(Lock lock) {
-        if(lock.getProcess().getIsStopTheWorld()) {
+        if(Boolean.TRUE.equals(lock.getProcess().getIsStopTheWorld())) {
             logger.trace("STW processes don't need concurrency filtering");
             return getAllPendingLocksOrderedByPriority();
         }
