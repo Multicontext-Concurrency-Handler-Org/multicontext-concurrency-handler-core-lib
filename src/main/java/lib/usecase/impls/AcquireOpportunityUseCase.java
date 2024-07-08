@@ -30,6 +30,7 @@ public class AcquireOpportunityUseCase extends MCHUseCase<ConsumeStateChangeEven
 
     @Override
     protected List<MCHConstraintViolation> validate(ConsumeStateChangeEventDTO dto) {
+        // @todo - change validation for a validation library PLEASE
         return new ArrayList<>() {{
             if(Objects.isNull(dto)) {
                 add(new MCHConstraintViolation("ConsumeStateChangeEventDTO can't be null"));

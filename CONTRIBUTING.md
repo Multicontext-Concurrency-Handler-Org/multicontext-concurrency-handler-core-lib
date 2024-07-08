@@ -27,7 +27,7 @@ when the process is STW
 
 Code example:
 ```java
-if(lock.getProcess().getIsStopTheWorld()) {
+if(Boolean.TRUE.equals(lock.getProcess().getIsStopTheWorld())) {
     logger.trace("STW processes don't need concurrency filtering");
     return getAllPendingLocksOrderedByPriority();
 }
@@ -86,5 +86,28 @@ if(lock.isEmpty()) {
 ### Critical Logs
 
 I don't have any examples right now, but I imagine that this can be used if you reach some scenario that seems like exploding the computer would be safer
+
+## Boolean comparisons
+
+Prefer using ```Boolean.TRUE``` or ```Boolean.FALSE``` to compare booleans that are not created within the same scope
+
+In the example bellow we use ```Boolean.TRUE.equals``` cause ```Process.getIsStopTheWorld``` could return null at some point, but don't
+use for the ```Objects.isNull``` method, because we know for sure that it will always return a not null value.
+
+Also, if using ```Boolean.TRUE.equals``` notice that both false and null will be executed on the else statement
+
+Code Example
+```java
+if(Boolean.TRUE.equals(lock.getProcess().getIsStopTheWorld())) {
+    logger.trace("STW processes don't need concurrency filtering");
+    return getAllPendingLocksOrderedByPriority();
+}
+
+var concurrentProcesses = this.persistenceContext.processRepository().getConcurrentProcesses(lock.getProcess());
+if(Objects.isNull(concurrentProcesses)) {
+    logger.warn("Unexpected behaviour IProcessRepository.getConcurrentProcesses(Process process) returned null instead of an empty list");
+    return new ArrayList<>();
+}
+```
 
 Thanks for contributing!
