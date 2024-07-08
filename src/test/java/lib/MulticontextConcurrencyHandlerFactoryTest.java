@@ -1,6 +1,7 @@
 package lib;
 
 import domain.entity.vos.events.DomainErrorEventVO;
+import domain.enums.DomainEventType;
 import domain.event.EventPublisher;
 import domain.event.impls.DomainErrorEvent;
 import org.junit.jupiter.api.Assertions;
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.TestDomainErrorEventSubscriber;
+import utils.GenericEventSubscriberTestUtil;
 
 import java.util.ArrayList;
 
@@ -20,17 +21,27 @@ class MulticontextConcurrencyHandlerFactoryTest {
         @Test
         @DisplayName("it should be able to create a multicontext concurrency handler instance")
         void create() {
-            Assertions.assertDoesNotThrow(() -> {
-                MulticontextConcurrencyHandlerFactory.create(
-                        null,
-                        null,
-                        new ArrayList<>() {{
-                            add(new TestDomainErrorEventSubscriber());
-                        }}
-                );
+            var originalEventContent = new DomainErrorEventVO();
 
-                EventPublisher.publishEvent(new DomainErrorEvent(new DomainErrorEventVO()));
-            });
+            var subscriber = new GenericEventSubscriberTestUtil<>(
+                    DomainEventType.DOMAIN_ERROR,
+                    DomainErrorEventVO.class,
+                    eventContent -> {
+                        Assertions.assertEquals(originalEventContent, eventContent);
+                    }
+            );
+
+            MulticontextConcurrencyHandlerFactory.create(
+                    null,
+                    null,
+                    new ArrayList<>() {
+                        {
+                            add(subscriber);
+                        }
+                    }
+            );
+
+            EventPublisher.publishEvent(new DomainErrorEvent(originalEventContent));
         }
     }
 }
