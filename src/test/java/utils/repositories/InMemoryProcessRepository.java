@@ -24,7 +24,7 @@ public class InMemoryProcessRepository implements IProcessRepository {
     }
 
     @Override
-    public Optional<Process> findProcessByName(String process) {
+    public Optional<Process> findByName(String process) {
         return processes.stream().findAny().filter(p -> p.getName().equals(process));
     }
 }

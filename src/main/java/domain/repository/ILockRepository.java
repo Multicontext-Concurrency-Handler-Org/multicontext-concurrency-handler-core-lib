@@ -68,4 +68,11 @@ public interface ILockRepository {
      * query, update and create new values to it since this lock was released
      */
     void releaseAccessExclusiveLock();
+
+    /**
+     * Return new lock id
+     *
+     * @return      New unused lock id
+     */
+    String generateLockId();
 }
