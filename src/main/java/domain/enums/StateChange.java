@@ -1,6 +1,7 @@
 package domain.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum StateChange {
     LOCK_CREATED("lock_created"),
@@ -12,11 +13,10 @@ public enum StateChange {
         this.code = code;
     }
 
-    public static StateChange fromCode(String value) {
+    public static Optional<StateChange> fromCode(String value) {
         return Arrays.stream(values())
                 .filter(x -> x.code.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("invalid code"));
+                .findFirst();
     }
     public String getCode() {
         return this.code;

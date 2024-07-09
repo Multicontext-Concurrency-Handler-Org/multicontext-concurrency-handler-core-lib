@@ -1,6 +1,7 @@
 package domain.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum DomainErrorType {
     INVALID_STATE("invalid_state"),
@@ -9,11 +10,10 @@ public enum DomainErrorType {
 
     private final String code;
 
-    public static DomainErrorType fromCode(String value) {
+    public static Optional<DomainErrorType> fromCode(String value) {
         return Arrays.stream(values())
                 .filter(x -> x.code.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("invalid code"));
+                .findFirst();
     }
 
     DomainErrorType(String code) {
