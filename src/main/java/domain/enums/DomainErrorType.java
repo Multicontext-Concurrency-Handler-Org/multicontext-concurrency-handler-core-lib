@@ -3,7 +3,9 @@ package domain.enums;
 import java.util.Arrays;
 
 public enum DomainErrorType {
-    INVALID_STATE("invalid_state");
+    INVALID_STATE("invalid_state"),
+    MISSING_CONFIG("missing_config"),
+    UNEXPECTED_EXCEPTION("unexpected_exception");
 
     private final String code;
 

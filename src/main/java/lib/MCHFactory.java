@@ -9,6 +9,7 @@ import domain.repository.ILockRepository;
 import domain.repository.IProcessRepository;
 import domain.repository.PersistenceContext;
 import domain.services.LockService;
+import domain.services.ProcessService;
 import lib.subscribers.DefaultErrorSubscriber;
 import lib.subscribers.DefaultLockAcquiredSubscriber;
 import lib.subscribers.DefaultStateChangeSubscriber;
@@ -47,11 +48,13 @@ public final class MCHFactory {
         EventPublisher.registerSubscribers(eventSubscribers);
 
         var persistenceContext = new PersistenceContext(processRepository, lockRepository);
+
         var lockService = new LockService(persistenceContext);
+        var processService = new ProcessService(persistenceContext);
 
         return new MCH(
             new AcquireOpportunityUseCase(lockService),
-            new AcquireLockRequestUseCase(persistenceContext),
+            new AcquireLockRequestUseCase(processService, lockService),
             new ReleaseLockRequestUseCase(persistenceContext),
             new DeadlockCleanupUseCase(persistenceContext)
         );
