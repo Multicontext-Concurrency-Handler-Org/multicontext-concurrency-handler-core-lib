@@ -1,5 +1,7 @@
 package domain.event;
 
+import domain.entity.vos.events.DomainErrorEventVO;
+import domain.event.impls.DomainErrorEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +20,11 @@ public class EventPublisher {
     }
 
     public static void publishEvent(DomainEvent event) {
+        if(event instanceof DomainErrorEvent domainErrorEvent
+            && domainErrorEvent.getContent() instanceof DomainErrorEventVO errorEventVO) {
+            logger.error("Publishing error event " + errorEventVO.message());
+        }
+
         EventPublisher.subscribers.forEach(subscriber -> {
             if(subscriber.isInterested(event.getType())) {
                 subscriber.notify(event);

@@ -5,10 +5,7 @@ import domain.entity.Process;
 import domain.enums.LockStatus;
 import domain.repository.ILockRepository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryLockRepository implements ILockRepository {
@@ -73,5 +70,10 @@ public class InMemoryLockRepository implements ILockRepository {
     @Override
     public void releaseAccessExclusiveLock() {
 
+    }
+
+    @Override
+    public String generateLockId() {
+        return UUID.randomUUID().toString();
     }
 }

@@ -1,6 +1,7 @@
 package domain.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum DomainEventType {
     ACQUIRE_LOCK("acquire_lock"),
@@ -10,11 +11,10 @@ public enum DomainEventType {
     DOMAIN_ERROR("domain_error");
     private final String code;
 
-    public static DomainEventType fromCode(String value) {
+    public static Optional<DomainEventType> fromCode(String value) {
         return Arrays.stream(values())
                 .filter(x -> x.code.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("invalid code"));
+                .findFirst();
     }
 
     DomainEventType(String code) {

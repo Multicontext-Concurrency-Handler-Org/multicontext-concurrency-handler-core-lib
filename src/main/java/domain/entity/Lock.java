@@ -1,17 +1,20 @@
 package domain.entity;
 
+import domain.entity.vos.events.DomainErrorEventVO;
+import domain.entity.vos.lock.ReleaseDetailsVO;
+import domain.enums.DomainErrorType;
+import domain.enums.LockReleaseMode;
 import domain.enums.LockStatus;
 import domain.entity.vos.lock.RunningDetailsVO;
+import domain.event.EventPublisher;
+import domain.event.impls.DomainErrorEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @AllArgsConstructor
@@ -53,5 +56,31 @@ public class Lock {
 
     private Instant calculateExpiresAt(Instant from) {
         return from.plus(this.process.getLifetime());
+    }
+
+    public Optional<Lock> release(LockReleaseMode releaseMode) {
+        if(Objects.isNull(this.runningDetailsVO) || !LockStatus.RUNNING.equals(this.status)) {
+            EventPublisher.publishEvent(
+                    new DomainErrorEvent(
+                            new DomainErrorEventVO(
+                                    DomainErrorType.INVALID_STATE,
+                                    "Can't release a lock that is not running or doesnt have running details",
+                                    Instant.now()
+                            )
+                    )
+            );
+            return Optional.empty();
+        }
+
+        this.status = LockStatus.STOPPED;
+        this.runningDetailsVO = new RunningDetailsVO(
+                this.runningDetailsVO.expiresAt(),
+                this.runningDetailsVO.deadlockNotifiedAt(),
+                new ReleaseDetailsVO(
+                        Instant.now(),
+                        releaseMode
+                )
+        );
+        return Optional.of(this);
     }
 }

@@ -2,8 +2,11 @@ package domain.services;
 
 import domain.entity.Lock;
 import domain.entity.vos.events.AcquireLockEventVO;
+import domain.entity.vos.events.DomainErrorEventVO;
 import domain.entity.vos.events.LockAcquiredEventVO;
+import domain.enums.DomainErrorType;
 import domain.event.EventPublisher;
+import domain.event.impls.DomainErrorEvent;
 import domain.event.impls.LockAcquiredEvent;
 import domain.repository.PersistenceContext;
 import lombok.AllArgsConstructor;
@@ -11,9 +14,11 @@ import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @AllArgsConstructor
 public class LockService {
@@ -117,5 +122,22 @@ public class LockService {
 
     public void upsert(Lock lock) {
         this.persistenceContext.lockRepository().upsert(lock);
+    }
+
+    public Optional<Lock> findLockById(String lockId) {
+        var lockOpt = this.persistenceContext.lockRepository().findLockById(lockId);
+        if(lockOpt.isEmpty()) {
+            EventPublisher.publishEvent(
+                    new DomainErrorEvent(
+                            new DomainErrorEventVO(
+                                    DomainErrorType.INVALID_STATE,
+                                    String.format("lock %s not found by id", lockId),
+                                    Instant.now()
+                            )
+                    )
+            );
+        }
+
+        return lockOpt;
     }
 }

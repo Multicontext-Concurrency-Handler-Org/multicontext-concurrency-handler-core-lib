@@ -1,6 +1,7 @@
 package domain.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum LockStatus {
     PENDING("pending"),
@@ -11,11 +12,10 @@ public enum LockStatus {
     LockStatus(String code) {
         this.code = code;
     }
-    public static LockStatus fromCode(String value) {
+    public static Optional<LockStatus> fromCode(String value) {
         return Arrays.stream(values())
                 .filter(x -> x.code.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("invalid code"));
+                .findFirst();
     }
     public String getCode() {
         return this.code;
