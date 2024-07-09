@@ -1,6 +1,7 @@
 package domain.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum LockReleaseMode {
     EVENT("event"),
@@ -13,11 +14,10 @@ public enum LockReleaseMode {
         this.code = code;
     }
 
-    public static LockReleaseMode fromCode(String value) {
+    public static Optional<LockReleaseMode> fromCode(String value) {
         return Arrays.stream(values())
                 .filter(x -> x.code.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("invalid code"));
+                .findFirst();
     }
     public String getCode() {
         return this.code;

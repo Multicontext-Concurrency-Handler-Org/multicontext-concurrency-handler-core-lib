@@ -55,8 +55,8 @@ public final class MCHFactory {
         return new MCH(
             new AcquireOpportunityUseCase(lockService),
             new AcquireLockRequestUseCase(processService, lockService),
-            new ReleaseLockRequestUseCase(persistenceContext),
-            new DeadlockCleanupUseCase(persistenceContext)
+            new ReleaseLockRequestUseCase(processService, lockService),
+            new DeadlockCleanupUseCase(processService, lockService)
         );
     }
 }

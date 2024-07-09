@@ -1,6 +1,7 @@
 package domain.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum LockLevel {
     PROCESS("process"),
@@ -8,11 +9,10 @@ public enum LockLevel {
 
     private final String code;
 
-    public static LockLevel fromCode(String value) {
+    public static Optional<LockLevel> fromCode(String value) {
         return Arrays.stream(values())
                 .filter(x -> x.code.equals(value))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("invalid code"));
+                .findFirst();
     }
 
     LockLevel(String code) {
