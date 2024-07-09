@@ -19,5 +19,5 @@ public interface IProcessRepository {
      * @param process processName
      * @return process if exists
      */
-    Optional<Process> findProcessByName(String process);
+    Optional<Process> findByName(String process);
 }

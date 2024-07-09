@@ -21,6 +21,10 @@ public class LockService {
 
     private final PersistenceContext persistenceContext;
 
+    public String generateLockId() {
+        return this.persistenceContext.lockRepository().generateLockId();
+    }
+
     public void lockCreatedAcquireOpportunity(String lockId) {
         if (Boolean.TRUE.equals(this.persistenceContext.lockRepository().hasStopTheWorldLockOnRunningStatus())) {
             logger.debug("Won't be able to start running since there is a STW lock running");
@@ -109,5 +113,9 @@ public class LockService {
         }
 
         return concurrentLocksPending;
+    }
+
+    public void upsert(Lock lock) {
+        this.persistenceContext.lockRepository().upsert(lock);
     }
 }
