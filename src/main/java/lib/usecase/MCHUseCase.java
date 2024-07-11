@@ -1,15 +1,12 @@
 package lib.usecase;
 
-import domain.errors.DomainErrorHandler;
-import domain.errors.UnexpectedErrorHandler;
+import domain.exceptions.DomainErrorException;
+import domain.exceptions.UnexpectedErrorException;
 import lib.exceptions.MCHConstraintViolation;
 import lib.exceptions.MCHConstraintViolationException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,13 +18,15 @@ public abstract class MCHUseCase<T> {
 
         try {
             this.execute(dto);
+        } catch (DomainErrorException domainErrorException) {
+            domainErrorException.throwEvent();
         } catch (Exception e) {
-            var domainErrorHandler = new UnexpectedErrorHandler(e);
+            var domainErrorHandler = new UnexpectedErrorException(e);
             domainErrorHandler.throwEvent();
         }
     }
 
-    protected abstract void execute(T dto);
+    protected abstract void execute(T dto) throws DomainErrorException;
 
     protected List<MCHConstraintViolation> validate(T dto) {
         try (var validatorFactory = Validation.buildDefaultValidatorFactory()) {

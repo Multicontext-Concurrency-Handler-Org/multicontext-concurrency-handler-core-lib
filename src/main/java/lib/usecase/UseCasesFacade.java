@@ -1,5 +1,6 @@
-package lib;
+package lib.usecase;
 
+import lib.IMCHCoreAPI;
 import lib.exceptions.MCHConstraintViolationException;
 import lib.usecase.impls.AcquireLockRequestUseCase;
 import lib.usecase.impls.AcquireOpportunityUseCase;
@@ -12,7 +13,7 @@ import lib.dto.ConsumeStateChangeEventDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class MCH implements IMulticontextConcurrencyHandler{
+public class UseCasesFacade implements IMCHCoreAPI {
     private final AcquireOpportunityUseCase acquireOpportunityUseCase;
     private final AcquireLockRequestUseCase acquireLockRequestUseCase;
     private final ReleaseLockRequestUseCase releaseLockRequestUseCase;
