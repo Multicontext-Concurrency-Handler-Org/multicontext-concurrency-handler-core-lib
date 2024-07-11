@@ -1,7 +1,7 @@
 package lib.usecase;
 
-import domain.exceptions.DomainErrorException;
-import domain.exceptions.UnexpectedErrorException;
+import domain.error.DomainErrorException;
+import domain.error.UnexpectedErrorException;
 import lib.exceptions.MCHConstraintViolation;
 import lib.exceptions.MCHConstraintViolationException;
 

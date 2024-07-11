@@ -1,15 +1,12 @@
 package domain.entity;
 
-import domain.entity.vos.events.DomainErrorEventVO;
+import cross.MCHWrongAbstractionUsage;
 import domain.entity.vos.lock.ReleaseDetailsVO;
-import domain.enums.DomainErrorType;
 import domain.enums.LockReleaseMode;
 import domain.enums.LockStatus;
 import domain.entity.vos.lock.RunningDetailsVO;
-import domain.event.EventPublisher;
-import domain.event.impls.DomainErrorEvent;
-import domain.exceptions.DomainErrorException;
-import domain.exceptions.InvalidStateException;
+import domain.error.DomainErrorException;
+import domain.error.InvalidStateException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.Instant;
 import java.util.*;
+
+import static cross.MCHWrongAbstractionUsage.requireArgumentNonNull;
 
 @Getter
 @AllArgsConstructor
@@ -33,9 +32,9 @@ public class Lock {
     private List<String> workingSet;
 
     public Lock(String id, Integer version, Process process, List<String> workingSet, Object context) {
-        Objects.requireNonNull(id, "id must not be null");
-        Objects.requireNonNull(version, "version must not be null");
-        Objects.requireNonNull(process, "process must not be null");
+        requireArgumentNonNull(id, "id must not be null");
+        requireArgumentNonNull(version, "version must not be null");
+        requireArgumentNonNull(process, "process must not be null");
 
         this.id = id;
         this.version = version;

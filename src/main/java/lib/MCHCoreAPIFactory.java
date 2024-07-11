@@ -1,13 +1,6 @@
 package lib;
 
 import domain.event.EventPublisher;
-import domain.event.IEventSubscriber;
-import domain.event.impls.DomainErrorEvent;
-import domain.event.impls.LockAcquiredEvent;
-import domain.event.impls.StateChangeEvent;
-import domain.repository.ILockRepository;
-import domain.repository.IProcessRepository;
-import domain.repository.PersistenceContext;
 import domain.services.LockService;
 import domain.services.ProcessService;
 import lib.configuration.PersistenceConfiguration;
@@ -21,11 +14,11 @@ import lib.usecase.impls.DeadlockCleanupUseCase;
 import lib.usecase.impls.ReleaseLockRequestUseCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static cross.MCHWrongAbstractionUsage.*;
 
 public final class MCHCoreAPIFactory {
     private static final Logger logger = LogManager.getLogger();
@@ -39,11 +32,10 @@ public final class MCHCoreAPIFactory {
             PersistenceConfiguration persistenceConfiguration,
             IProducer producer
     ) {
-        Objects.requireNonNull(persistenceConfiguration, "Required argument PersistenceConfiguration persistenceConfiguration");
-        Objects.requireNonNull(persistenceConfiguration.lockRepository(), "");
-        Objects.requireNonNull(persistenceConfiguration.processRepository(), "");
-
-        Objects.requireNonNull(producer, "Required argument IProducer producer");
+        requireArgumentNonNull(persistenceConfiguration, "persistenceConfiguration");
+        requireArgumentNonNull(persistenceConfiguration.lockRepository(), "persistenceConfiguration.lockRepository()");
+        requireArgumentNonNull(persistenceConfiguration.processRepository(), "persistenceConfiguration.processRepository()");
+        requireArgumentNonNull(producer, "producer");
 
         return getUseCasesFacade(persistenceConfiguration, SubscribersConfiguration.getDefault(producer));
     }
@@ -58,10 +50,12 @@ public final class MCHCoreAPIFactory {
             PersistenceConfiguration persistenceConfiguration,
             SubscribersConfiguration subscribersConfiguration
     ) {
-        Objects.requireNonNull(persistenceConfiguration, "Required argument PersistenceConfiguration persistenceConfiguration");
-        Objects.requireNonNull(persistenceConfiguration.lockRepository(), "");
-        Objects.requireNonNull(persistenceConfiguration.processRepository(), "");
-        Objects.requireNonNull(subscribersConfiguration, "Required argument SubscribersConfiguration subscribersConfiguration");
+        requireArgumentNonNull(persistenceConfiguration, "persistenceConfiguration");
+        requireArgumentNonNull(persistenceConfiguration, "persistenceConfiguration");
+        requireArgumentNonNull(persistenceConfiguration.lockRepository(), "persistenceConfiguration.lockRepository()");
+        requireArgumentNonNull(persistenceConfiguration.processRepository(), "persistenceConfiguration.processRepository()");
+        requireArgumentNonNull(subscribersConfiguration, "subscribersConfiguration");
+        requireArgumentNonNull(subscribersConfiguration.useDefaultSubscriber(), "subscribersConfiguration.useDefaultSubscriber()");
 
         return getUseCasesFacade(persistenceConfiguration, subscribersConfiguration);
     }
@@ -87,12 +81,23 @@ public final class MCHCoreAPIFactory {
 
     private static void registerSubscribers(SubscribersConfiguration subscribersConfiguration) {
         if(Boolean.TRUE.equals(subscribersConfiguration.useDefaultSubscriber())) {
-            Objects.requireNonNull(
+            requireNonNullWithReason(
                     subscribersConfiguration.producer(),
                     "If SubscribersConfiguration.useDefaultSubscriber equals true, SubscribersConfiguration.producer must not be null"
             );
 
             EventPublisher.registerSubscribers(List.of(new DomainEventProducerSubscriber(subscribersConfiguration.producer())));
+        } else {
+            if(Objects.nonNull(subscribersConfiguration.producer())) {
+                logger.warn("SubscribersConfiguration.producer won't be used since SubscribersConfiguration.useDefaultSubscriber is false");
+            }
+
+            if(Objects.isNull(subscribersConfiguration.customSubscribers()) || subscribersConfiguration.customSubscribers().isEmpty()) {
+                requireNonNullWithReason(
+                        subscribersConfiguration.producer(),
+                        "If SubscribersConfiguration.useDefaultSubscriber equals false, SubscribersConfiguration.customSubscribers must not be null or empty"
+                );
+            }
         }
 
         if(Objects.nonNull(subscribersConfiguration.customSubscribers())) {

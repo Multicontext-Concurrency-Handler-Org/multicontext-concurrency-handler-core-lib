@@ -4,7 +4,7 @@ import domain.entity.Lock;
 import domain.entity.vos.events.AcquireLockEventVO;
 import domain.event.EventPublisher;
 import domain.event.impls.AcquireLockEvent;
-import domain.exceptions.DomainErrorException;
+import domain.error.DomainErrorException;
 import domain.services.LockService;
 import domain.services.ProcessService;
 import lib.dto.ConsumeAcquireLockDTO;
