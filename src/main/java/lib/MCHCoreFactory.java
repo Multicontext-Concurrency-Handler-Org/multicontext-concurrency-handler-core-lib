@@ -32,10 +32,10 @@ public final class MCHCoreFactory {
             PersistenceConfiguration persistenceConfiguration,
             IProducer producer
     ) {
-        requireArgumentNonNull(persistenceConfiguration, "persistenceConfiguration");
-        requireArgumentNonNull(persistenceConfiguration.lockRepository(), "persistenceConfiguration.lockRepository()");
-        requireArgumentNonNull(persistenceConfiguration.processRepository(), "persistenceConfiguration.processRepository()");
-        requireArgumentNonNull(producer, "producer");
+        assertNonNull(persistenceConfiguration, "persistenceConfiguration must not be null");
+        assertNonNull(persistenceConfiguration.lockRepository(), "persistenceConfiguration.lockRepository() must not be null");
+        assertNonNull(persistenceConfiguration.processRepository(), "persistenceConfiguration.processRepository() must not be null");
+        assertNonNull(producer, "producer must not be null");
 
         return getUseCasesFacade(persistenceConfiguration, SubscribersConfiguration.getDefault(producer));
     }
@@ -50,12 +50,12 @@ public final class MCHCoreFactory {
             PersistenceConfiguration persistenceConfiguration,
             SubscribersConfiguration subscribersConfiguration
     ) {
-        requireArgumentNonNull(persistenceConfiguration, "persistenceConfiguration");
-        requireArgumentNonNull(persistenceConfiguration, "persistenceConfiguration");
-        requireArgumentNonNull(persistenceConfiguration.lockRepository(), "persistenceConfiguration.lockRepository()");
-        requireArgumentNonNull(persistenceConfiguration.processRepository(), "persistenceConfiguration.processRepository()");
-        requireArgumentNonNull(subscribersConfiguration, "subscribersConfiguration");
-        requireArgumentNonNull(subscribersConfiguration.useDefaultSubscriber(), "subscribersConfiguration.useDefaultSubscriber()");
+        assertNonNull(persistenceConfiguration, "persistenceConfiguration must not be null");
+        assertNonNull(persistenceConfiguration, "persistenceConfiguration must not be null");
+        assertNonNull(persistenceConfiguration.lockRepository(), "persistenceConfiguration.lockRepository() must not be null");
+        assertNonNull(persistenceConfiguration.processRepository(), "persistenceConfiguration.processRepository() must not be null");
+        assertNonNull(subscribersConfiguration, "subscribersConfiguration must not be null");
+        assertNonNull(subscribersConfiguration.useDefaultSubscriber(), "subscribersConfiguration.useDefaultSubscriber() must not be null");
 
         return getUseCasesFacade(persistenceConfiguration, subscribersConfiguration);
     }
@@ -81,7 +81,7 @@ public final class MCHCoreFactory {
 
     private static void registerSubscribers(SubscribersConfiguration subscribersConfiguration) {
         if(Boolean.TRUE.equals(subscribersConfiguration.useDefaultSubscriber())) {
-            requireNonNullWithReason(
+            assertNonNull(
                     subscribersConfiguration.producer(),
                     "If SubscribersConfiguration.useDefaultSubscriber equals true, SubscribersConfiguration.producer must not be null"
             );
@@ -93,7 +93,7 @@ public final class MCHCoreFactory {
             }
 
             if(Objects.isNull(subscribersConfiguration.customSubscribers()) || subscribersConfiguration.customSubscribers().isEmpty()) {
-                requireNonNullWithReason(
+                assertNonNull(
                         subscribersConfiguration.producer(),
                         "If SubscribersConfiguration.useDefaultSubscriber equals false, SubscribersConfiguration.customSubscribers must not be null or empty"
                 );

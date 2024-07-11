@@ -1,6 +1,5 @@
 package domain.entity;
 
-import cross.MCHWrongAbstractionUsage;
 import domain.entity.vos.lock.ReleaseDetailsVO;
 import domain.enums.LockReleaseMode;
 import domain.enums.LockStatus;
@@ -15,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import java.time.Instant;
 import java.util.*;
 
-import static cross.MCHWrongAbstractionUsage.requireArgumentNonNull;
+import static cross.MCHWrongAbstractionUsage.assertNonNull;
 
 @Getter
 @AllArgsConstructor
@@ -32,9 +31,9 @@ public class Lock {
     private List<String> workingSet;
 
     public Lock(String id, Integer version, Process process, List<String> workingSet, Object context) {
-        requireArgumentNonNull(id, "id must not be null");
-        requireArgumentNonNull(version, "version must not be null");
-        requireArgumentNonNull(process, "process must not be null");
+        assertNonNull(id, "id must not be null");
+        assertNonNull(version, "version must not be null");
+        assertNonNull(process, "process must not be null");
 
         this.id = id;
         this.version = version;

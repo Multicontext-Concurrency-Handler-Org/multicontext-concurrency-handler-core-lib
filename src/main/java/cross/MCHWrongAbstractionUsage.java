@@ -12,24 +12,8 @@ public class MCHWrongAbstractionUsage extends RuntimeException {
     public MCHWrongAbstractionUsage(String message) {
         super(message);
     }
-
-    public static void requireBeTrue(Boolean required, String reason) {
-        requireArgumentNonNull(required, "required");
-
-        if(!required) {
-            throw new MCHWrongAbstractionUsage(reason);
-        }
-    }
-
-    public static <T> void requireNonNullWithReason(T obj, String reason) {
+    public static <T> void assertNonNull(T obj, String reason) {
         if (obj == null)
             throw new MCHWrongAbstractionUsage(reason);
-    }
-
-    public static <T> void requireArgumentNonNull(T obj, String argName) {
-        if (obj == null)
-            throw new MCHWrongAbstractionUsage(
-                String.format("Invalid argument: %s must not be null", argName)
-            );
     }
 }

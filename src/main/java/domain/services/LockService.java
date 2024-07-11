@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static cross.MCHWrongAbstractionUsage.requireNonNullWithReason;
+import static cross.MCHWrongAbstractionUsage.assertNonNull;
 
 @AllArgsConstructor
 public class LockService {
@@ -56,7 +56,7 @@ public class LockService {
         }
 
         var concurrentLocksPending = getPendingConcurrentLocksOrderedByPriority(lock.get());
-        requireNonNullWithReason(concurrentLocksPending, "LockService.getPendingConcurrentLocksOrderedByPriority(Lock lock) should never return null");
+        assertNonNull(concurrentLocksPending, "LockService.getPendingConcurrentLocksOrderedByPriority(Lock lock) should never return null");
         concurrentLocksPending.forEach(this::executeAcquireOpportunityFor);
     }
 
