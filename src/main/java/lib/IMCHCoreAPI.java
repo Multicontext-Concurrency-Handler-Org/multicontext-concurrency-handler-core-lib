@@ -6,7 +6,7 @@ import lib.dto.ConsumeReleaseLockDTO;
 import lib.dto.ConsumeStateChangeEventDTO;
 import lib.exceptions.MCHConstraintViolationException;
 
-public interface IMulticontextConcurrencyHandler {
+public interface IMCHCoreAPI {
     void consumeStateChange(ConsumeStateChangeEventDTO stateChangeEventDTO) throws MCHConstraintViolationException;
     void consumeAcquireLock(ConsumeAcquireLockDTO acquireLockDTO) throws MCHConstraintViolationException;
     void consumeReleaseLock(ConsumeReleaseLockDTO releaseLockDTO) throws MCHConstraintViolationException;
