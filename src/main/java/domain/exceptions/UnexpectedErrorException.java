@@ -1,4 +1,4 @@
-package domain.errors;
+package domain.exceptions;
 
 import domain.entity.vos.events.DomainErrorEventVO;
 import domain.enums.DomainErrorType;
@@ -8,9 +8,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
 
-public class UnexpectedErrorHandler extends DomainErrorHandler {
+public class UnexpectedErrorException extends DomainErrorException {
     private final Exception unexpectedException;
-    public UnexpectedErrorHandler(Exception e) {
+    public UnexpectedErrorException(Exception e) {
         this.unexpectedException = e;
     }
 
@@ -19,13 +19,13 @@ public class UnexpectedErrorHandler extends DomainErrorHandler {
         return new DomainErrorEvent(
                 new DomainErrorEventVO(
                         DomainErrorType.UNEXPECTED_EXCEPTION,
-                        this.getMessage(),
+                        String.format("Unexpected Exception: %s", this.buildMessage()),
                         Instant.now()
                 )
         );
     }
 
-    private String getMessage() {
+    private String buildMessage() {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         this.unexpectedException.printStackTrace(pw);

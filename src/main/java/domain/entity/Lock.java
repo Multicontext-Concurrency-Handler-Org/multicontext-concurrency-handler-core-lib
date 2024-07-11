@@ -8,6 +8,8 @@ import domain.enums.LockStatus;
 import domain.entity.vos.lock.RunningDetailsVO;
 import domain.event.EventPublisher;
 import domain.event.impls.DomainErrorEvent;
+import domain.exceptions.DomainErrorException;
+import domain.exceptions.InvalidStateException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
@@ -58,18 +60,13 @@ public class Lock {
         return from.plus(this.process.getLifetime());
     }
 
-    public Optional<Lock> release(LockReleaseMode releaseMode) {
-        if(Objects.isNull(this.runningDetailsVO) || !LockStatus.RUNNING.equals(this.status)) {
-            EventPublisher.publishEvent(
-                    new DomainErrorEvent(
-                            new DomainErrorEventVO(
-                                    DomainErrorType.INVALID_STATE,
-                                    "Can't release a lock that is not running or doesnt have running details",
-                                    Instant.now()
-                            )
-                    )
-            );
-            return Optional.empty();
+    public Lock releaseOrThrow(LockReleaseMode releaseMode) throws DomainErrorException {
+        if(!LockStatus.RUNNING.equals(this.status)) {
+            throw new InvalidStateException("Can't release a lock that is not running");
+        }
+
+        if(Objects.isNull(this.runningDetailsVO)) {
+            throw new InvalidStateException("A running lock shall have running details");
         }
 
         this.status = LockStatus.STOPPED;
@@ -81,6 +78,7 @@ public class Lock {
                         releaseMode
                 )
         );
-        return Optional.of(this);
+
+        return this;
     }
 }

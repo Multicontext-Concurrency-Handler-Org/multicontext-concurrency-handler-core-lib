@@ -36,9 +36,9 @@ public interface ILockRepository {
     Optional<Lock> findLockById(String lockId);
 
     /**
-     * Upsert lock
+     * Upsert definition: (computing, database) To insert rows into a database table if they do not already exist, or update them if they do.
      *
-     * @param lock
+     * @param lock  The lock to be updated or created
      */
     void upsert(Lock lock);
 
@@ -60,12 +60,18 @@ public interface ILockRepository {
     /**
      * Must lock the "lock table / collection" so that no other instance or threads can
      * neither query, update nor create new values to it until this lock is released
+     * <p></p>
+     * AccessExclusiveLock must have the same functioning as it is in postgresql
+     * <a href="https://www.postgresql.org/docs/current/explicit-locking.html">PostgreSQL Locks Documentation</a>
      */
     void acquireAccessExclusiveLock();
 
     /**
      * Must unlock the "lock table / collection" so that other instances or threads can
      * query, update and create new values to it since this lock was released
+     * <p></p>
+     * AccessExclusiveLock must have the same functioning as it is in postgresql
+     * <a href="https://www.postgresql.org/docs/current/explicit-locking.html">PostgreSQL Locks Documentation</a>
      */
     void releaseAccessExclusiveLock();
 

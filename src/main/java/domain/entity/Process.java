@@ -20,5 +20,5 @@ public class Process {
     private String notificationTarget;
     private Instant validityStartsAt;
     private Instant validityEndsAt;
-    private List<ConcurrencyVO> concurrencies;
+    private List<ConcurrencyVO> concurrencyList;
 }
