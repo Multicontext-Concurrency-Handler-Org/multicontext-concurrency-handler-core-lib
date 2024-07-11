@@ -20,7 +20,7 @@ import java.util.Objects;
 
 import static cross.MCHWrongAbstractionUsage.*;
 
-public final class MCHCoreAPIFactory {
+public final class MCHCoreFactory {
     private static final Logger logger = LogManager.getLogger();
     /**
      * Default subscriber configuration usage
@@ -28,7 +28,7 @@ public final class MCHCoreAPIFactory {
      * @param producer producer that must handle all domain events
      * @return UseCasesFacade instance that implements IMCHCoreAPI
      */
-    public static IMCHCoreAPI create(
+    public static IMCHCore create(
             PersistenceConfiguration persistenceConfiguration,
             IProducer producer
     ) {
@@ -46,7 +46,7 @@ public final class MCHCoreAPIFactory {
      * @param subscribersConfiguration subscribers configuration
      * @return UseCasesFacade instance that implements IMCHCoreAPI
      */
-    public static IMCHCoreAPI create(
+    public static IMCHCore create(
             PersistenceConfiguration persistenceConfiguration,
             SubscribersConfiguration subscribersConfiguration
     ) {

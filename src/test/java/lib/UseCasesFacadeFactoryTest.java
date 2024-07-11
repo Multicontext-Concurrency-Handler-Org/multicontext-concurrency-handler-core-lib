@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -27,33 +26,33 @@ class UseCasesFacadeFactoryTest {
     IEventSubscriber eventSubscriberMock = mock(IEventSubscriber.class);
 
     @Nested
-    class CreateUseCasesFactory {
+    class MCHCoreFactoryCreateNullChecks {
         @Test
         @DisplayName("Create MCH Instance with default subscribers")
         void createInstanceDefaultSubscribers() {
             Assertions.assertThrows(MCHWrongAbstractionUsage.class, () -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         null,
                         producerMock
                 );
             });
 
             Assertions.assertThrows(MCHWrongAbstractionUsage.class, () -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(null, null),
                         producerMock
                 );
             });
 
             Assertions.assertThrows(MCHWrongAbstractionUsage.class, () -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, null),
                         producerMock
                 );
             });
 
             Assertions.assertThrows(MCHWrongAbstractionUsage.class, () -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(null, lockRepositoryMock),
                         producerMock
                 );
@@ -61,7 +60,7 @@ class UseCasesFacadeFactoryTest {
 
             // valid
             Assertions.assertDoesNotThrow(() -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, lockRepositoryMock),
                         producerMock
                 );
@@ -72,21 +71,21 @@ class UseCasesFacadeFactoryTest {
         @DisplayName("Create MCH Instance with custom subscribers")
         void createInstanceCustomSubscribers() {
             Assertions.assertThrows(MCHWrongAbstractionUsage.class, () -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, lockRepositoryMock),
                         new SubscribersConfiguration(null, null, null)
                 );
             });
 
             Assertions.assertThrows(MCHWrongAbstractionUsage.class, () -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, lockRepositoryMock),
                         new SubscribersConfiguration(true, null, null)
                 );
             });
 
             Assertions.assertThrows(MCHWrongAbstractionUsage.class, () -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, lockRepositoryMock),
                         new SubscribersConfiguration(false, null, null)
                 );
@@ -94,7 +93,7 @@ class UseCasesFacadeFactoryTest {
 
             // valid
             Assertions.assertDoesNotThrow(() -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, lockRepositoryMock),
                         new SubscribersConfiguration(true, producerMock, null)
                 );
@@ -102,7 +101,7 @@ class UseCasesFacadeFactoryTest {
 
             // valid
             Assertions.assertDoesNotThrow(() -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, lockRepositoryMock),
                         new SubscribersConfiguration(true, producerMock, List.of(eventSubscriberMock))
                 );
@@ -110,7 +109,7 @@ class UseCasesFacadeFactoryTest {
 
             // valid
             Assertions.assertDoesNotThrow(() -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, lockRepositoryMock),
                         new SubscribersConfiguration(false, null, List.of(eventSubscriberMock))
                 );
@@ -118,7 +117,7 @@ class UseCasesFacadeFactoryTest {
 
             // only warn that producer won't be used
             Assertions.assertDoesNotThrow(() -> {
-                MCHCoreAPIFactory.create(
+                MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, lockRepositoryMock),
                         new SubscribersConfiguration(false, producerMock, List.of(eventSubscriberMock))
                 );
