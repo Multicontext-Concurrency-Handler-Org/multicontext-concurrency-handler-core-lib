@@ -1,13 +1,6 @@
 package lib;
 
 import domain.event.EventPublisher;
-import domain.event.IEventSubscriber;
-import domain.event.impls.DomainErrorEvent;
-import domain.event.impls.LockAcquiredEvent;
-import domain.event.impls.StateChangeEvent;
-import domain.repository.ILockRepository;
-import domain.repository.IProcessRepository;
-import domain.repository.PersistenceContext;
 import domain.services.LockService;
 import domain.services.ProcessService;
 import lib.configuration.PersistenceConfiguration;
@@ -21,13 +14,13 @@ import lib.usecase.impls.DeadlockCleanupUseCase;
 import lib.usecase.impls.ReleaseLockRequestUseCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class MCHCoreAPIFactory {
+import static cross.MCHWrongAbstractionUsage.*;
+
+public final class MCHCoreFactory {
     private static final Logger logger = LogManager.getLogger();
     /**
      * Default subscriber configuration usage
@@ -35,15 +28,14 @@ public final class MCHCoreAPIFactory {
      * @param producer producer that must handle all domain events
      * @return UseCasesFacade instance that implements IMCHCoreAPI
      */
-    public static IMCHCoreAPI create(
+    public static IMCHCore create(
             PersistenceConfiguration persistenceConfiguration,
             IProducer producer
     ) {
-        Objects.requireNonNull(persistenceConfiguration, "Required argument PersistenceConfiguration persistenceConfiguration");
-        Objects.requireNonNull(persistenceConfiguration.lockRepository(), "");
-        Objects.requireNonNull(persistenceConfiguration.processRepository(), "");
-
-        Objects.requireNonNull(producer, "Required argument IProducer producer");
+        assertNonNull(persistenceConfiguration, "persistenceConfiguration must not be null");
+        assertNonNull(persistenceConfiguration.lockRepository(), "persistenceConfiguration.lockRepository() must not be null");
+        assertNonNull(persistenceConfiguration.processRepository(), "persistenceConfiguration.processRepository() must not be null");
+        assertNonNull(producer, "producer must not be null");
 
         return getUseCasesFacade(persistenceConfiguration, SubscribersConfiguration.getDefault(producer));
     }
@@ -54,14 +46,16 @@ public final class MCHCoreAPIFactory {
      * @param subscribersConfiguration subscribers configuration
      * @return UseCasesFacade instance that implements IMCHCoreAPI
      */
-    public static IMCHCoreAPI create(
+    public static IMCHCore create(
             PersistenceConfiguration persistenceConfiguration,
             SubscribersConfiguration subscribersConfiguration
     ) {
-        Objects.requireNonNull(persistenceConfiguration, "Required argument PersistenceConfiguration persistenceConfiguration");
-        Objects.requireNonNull(persistenceConfiguration.lockRepository(), "");
-        Objects.requireNonNull(persistenceConfiguration.processRepository(), "");
-        Objects.requireNonNull(subscribersConfiguration, "Required argument SubscribersConfiguration subscribersConfiguration");
+        assertNonNull(persistenceConfiguration, "persistenceConfiguration must not be null");
+        assertNonNull(persistenceConfiguration, "persistenceConfiguration must not be null");
+        assertNonNull(persistenceConfiguration.lockRepository(), "persistenceConfiguration.lockRepository() must not be null");
+        assertNonNull(persistenceConfiguration.processRepository(), "persistenceConfiguration.processRepository() must not be null");
+        assertNonNull(subscribersConfiguration, "subscribersConfiguration must not be null");
+        assertNonNull(subscribersConfiguration.useDefaultSubscriber(), "subscribersConfiguration.useDefaultSubscriber() must not be null");
 
         return getUseCasesFacade(persistenceConfiguration, subscribersConfiguration);
     }
@@ -87,12 +81,23 @@ public final class MCHCoreAPIFactory {
 
     private static void registerSubscribers(SubscribersConfiguration subscribersConfiguration) {
         if(Boolean.TRUE.equals(subscribersConfiguration.useDefaultSubscriber())) {
-            Objects.requireNonNull(
+            assertNonNull(
                     subscribersConfiguration.producer(),
                     "If SubscribersConfiguration.useDefaultSubscriber equals true, SubscribersConfiguration.producer must not be null"
             );
 
             EventPublisher.registerSubscribers(List.of(new DomainEventProducerSubscriber(subscribersConfiguration.producer())));
+        } else {
+            if(Objects.nonNull(subscribersConfiguration.producer())) {
+                logger.warn("SubscribersConfiguration.producer won't be used since SubscribersConfiguration.useDefaultSubscriber is false");
+            }
+
+            if(Objects.isNull(subscribersConfiguration.customSubscribers()) || subscribersConfiguration.customSubscribers().isEmpty()) {
+                assertNonNull(
+                        subscribersConfiguration.producer(),
+                        "If SubscribersConfiguration.useDefaultSubscriber equals false, SubscribersConfiguration.customSubscribers must not be null or empty"
+                );
+            }
         }
 
         if(Objects.nonNull(subscribersConfiguration.customSubscribers())) {

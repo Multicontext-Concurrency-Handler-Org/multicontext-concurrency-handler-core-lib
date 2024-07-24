@@ -1,4 +1,4 @@
-package domain.exceptions;
+package domain.error;
 
 import domain.event.EventPublisher;
 import domain.event.impls.DomainErrorEvent;

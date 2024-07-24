@@ -5,7 +5,7 @@ import domain.entity.vos.events.ReleaseLockEventVO;
 import domain.enums.LockReleaseMode;
 import domain.event.EventPublisher;
 import domain.event.impls.ReleaseLockEvent;
-import domain.exceptions.DomainErrorException;
+import domain.error.DomainErrorException;
 import domain.services.LockService;
 import domain.services.ProcessService;
 import lib.dto.ConsumeReleaseLockDTO;

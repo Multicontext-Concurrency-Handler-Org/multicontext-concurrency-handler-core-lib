@@ -1,12 +1,10 @@
 package domain.services;
 
 import domain.entity.Process;
-import domain.exceptions.DomainErrorException;
-import domain.exceptions.MissingConfigurationException;
+import domain.error.DomainErrorException;
+import domain.error.MissingConfigurationException;
 import domain.repository.PersistenceContext;
 import lombok.AllArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @AllArgsConstructor
 public class ProcessService {

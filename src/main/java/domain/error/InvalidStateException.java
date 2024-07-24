@@ -1,4 +1,4 @@
-package domain.exceptions;
+package domain.error;
 
 import domain.entity.vos.events.DomainErrorEventVO;
 import domain.enums.DomainErrorType;
@@ -8,14 +8,14 @@ import lombok.AllArgsConstructor;
 import java.time.Instant;
 
 @AllArgsConstructor
-public class MissingConfigurationException extends DomainErrorException {
-    private final String missingConfiguration;
+public class InvalidStateException extends DomainErrorException {
+    private final String invalidStateReason;
     @Override
     protected DomainErrorEvent toEvent() {
         return new DomainErrorEvent(
                 new DomainErrorEventVO(
-                        DomainErrorType.MISSING_CONFIG,
-                        String.format("Missing configuration: %s", this.missingConfiguration),
+                        DomainErrorType.INVALID_STATE,
+                        String.format("Invalid state: %s", this.invalidStateReason),
                         Instant.now()
                 )
         );

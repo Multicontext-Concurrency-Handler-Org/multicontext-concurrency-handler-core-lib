@@ -5,7 +5,7 @@ import domain.entity.vos.events.AcquireLockEventVO;
 import domain.entity.vos.events.LockAcquiredEventVO;
 import domain.event.EventPublisher;
 import domain.event.impls.LockAcquiredEvent;
-import domain.exceptions.InvalidStateException;
+import domain.error.InvalidStateException;
 import domain.repository.PersistenceContext;
 import lombok.AllArgsConstructor;
 
@@ -15,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static cross.MCHWrongAbstractionUsage.assertNonNull;
 
 @AllArgsConstructor
 public class LockService {
@@ -54,7 +56,7 @@ public class LockService {
         }
 
         var concurrentLocksPending = getPendingConcurrentLocksOrderedByPriority(lock.get());
-        Objects.requireNonNull(concurrentLocksPending, "LockService.getPendingConcurrentLocksOrderedByPriority(Lock lock) should never return null");
+        assertNonNull(concurrentLocksPending, "LockService.getPendingConcurrentLocksOrderedByPriority(Lock lock) should never return null");
         concurrentLocksPending.forEach(this::executeAcquireOpportunityFor);
     }
 

@@ -1,4 +1,4 @@
-package domain.exceptions;
+package domain.error;
 
 import domain.entity.vos.events.DomainErrorEventVO;
 import domain.enums.DomainErrorType;
