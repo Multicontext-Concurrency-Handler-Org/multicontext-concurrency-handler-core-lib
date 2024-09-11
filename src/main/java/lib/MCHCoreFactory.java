@@ -71,11 +71,12 @@ public final class MCHCoreFactory {
         var lockService = new LockService(persistenceContext);
         var processService = new ProcessService(persistenceContext);
 
+        var releaseLockRequestUseCase = new ReleaseLockRequestUseCase(processService, lockService);
         return new UseCasesFacade(
                 new AcquireOpportunityUseCase(lockService),
                 new AcquireLockRequestUseCase(processService, lockService),
-                new ReleaseLockRequestUseCase(processService, lockService),
-                new DeadlockCleanupUseCase(processService, lockService)
+                releaseLockRequestUseCase,
+                new DeadlockCleanupUseCase(processService, lockService, releaseLockRequestUseCase)
         );
     }
 

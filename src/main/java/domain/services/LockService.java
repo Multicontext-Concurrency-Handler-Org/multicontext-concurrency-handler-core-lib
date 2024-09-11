@@ -131,4 +131,8 @@ public class LockService {
 
         return lockOpt.get();
     }
+
+    public List<Lock> findExpiredLocks() {
+        return this.persistenceContext.lockRepository().findExpiredLocks();
+    }
 }

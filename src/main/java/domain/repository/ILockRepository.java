@@ -81,4 +81,11 @@ public interface ILockRepository {
      * @return      New unused lock id
      */
     String generateLockId();
+
+
+    /**
+     * Must return locks that runningDetailsVO.expiresAt is greater than now
+     * @return List of locks that are expired
+     */
+    List<Lock> findExpiredLocks();
 }

@@ -115,7 +115,7 @@ class UseCasesFacadeFactoryTest {
                 );
             });
 
-            // only warn that producer won't be used
+            // only warn that producer won't be used (producer is only used to inject into default subscribers)
             Assertions.assertDoesNotThrow(() -> {
                 MCHCoreFactory.create(
                         new PersistenceConfiguration(processRepositoryMock, lockRepositoryMock),

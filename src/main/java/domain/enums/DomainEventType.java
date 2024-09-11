@@ -8,7 +8,8 @@ public enum DomainEventType {
     RELEASE_LOCK("release_lock"),
     STATE_CHANGE("state_change"),
     LOCK_ACQUIRED("lock_acquired"),
-    DOMAIN_ERROR("domain_error");
+    DOMAIN_ERROR("domain_error"),
+    HANGING_DEADLOCK("hanging_deadlock");
     private final String code;
 
     public static Optional<DomainEventType> fromCode(String value) {
