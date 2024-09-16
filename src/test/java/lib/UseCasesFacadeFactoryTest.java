@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -20,10 +21,14 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class UseCasesFacadeFactoryTest {
-    IProcessRepository processRepositoryMock = mock(IProcessRepository.class);
-    ILockRepository lockRepositoryMock = mock(ILockRepository.class);
-    IProducer producerMock = mock(IProducer.class);
-    IEventSubscriber eventSubscriberMock = mock(IEventSubscriber.class);
+    @Mock
+    IProcessRepository processRepositoryMock;
+    @Mock
+    ILockRepository lockRepositoryMock;
+    @Mock
+    IProducer producerMock;
+    @Mock
+    IEventSubscriber eventSubscriberMock;
 
     @Nested
     class MCHCoreFactoryCreateNullChecks {
