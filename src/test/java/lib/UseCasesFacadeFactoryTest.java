@@ -17,8 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
-
 @ExtendWith(MockitoExtension.class)
 class UseCasesFacadeFactoryTest {
     @Mock
