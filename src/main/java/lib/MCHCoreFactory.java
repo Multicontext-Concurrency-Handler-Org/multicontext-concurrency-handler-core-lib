@@ -76,7 +76,7 @@ public final class MCHCoreFactory {
                 new AcquireOpportunityUseCase(lockService),
                 new AcquireLockRequestUseCase(processService, lockService),
                 releaseLockRequestUseCase,
-                new DeadlockCleanupUseCase(processService, lockService, releaseLockRequestUseCase)
+                new DeadlockCleanupUseCase(lockService, releaseLockRequestUseCase)
         );
     }
 

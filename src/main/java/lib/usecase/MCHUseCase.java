@@ -2,11 +2,11 @@ package lib.usecase;
 
 import domain.error.DomainErrorException;
 import domain.error.UnexpectedErrorException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
 import lib.exceptions.MCHConstraintViolation;
 import lib.exceptions.MCHConstraintViolationException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

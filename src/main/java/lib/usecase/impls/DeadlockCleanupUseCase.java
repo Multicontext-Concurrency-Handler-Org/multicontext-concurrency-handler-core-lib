@@ -3,6 +3,7 @@ package lib.usecase.impls;
 import domain.entity.Lock;
 import domain.entity.vos.events.HangingDeadlockVO;
 import domain.error.DomainErrorException;
+import domain.error.UnexpectedErrorException;
 import domain.event.EventPublisher;
 import domain.event.impls.HangingDeadlock;
 import domain.repository.PersistenceContext;
@@ -20,9 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DeadlockCleanupUseCase extends MCHUseCase<ConsumeDeadlockCleanupEventDTO> {
     public static final String PROCESS = "deadlock_cleanup";
-    private static final Logger logger = LogManager.getLogger();
 
-    private final ProcessService processService;
     private final LockService lockService;
     private final ReleaseLockRequestUseCase releaseLockRequestUseCase;
 
@@ -31,7 +30,7 @@ public class DeadlockCleanupUseCase extends MCHUseCase<ConsumeDeadlockCleanupEve
         List<Lock> deadlocks = this.lockService.findExpiredLocks();
 
         deadlocks.parallelStream().forEach(lock -> {
-            if(lock.getProcess().getIsManualDeadlockCleaningRequired()) {
+            if (lock.getProcess().getIsManualDeadlockCleaningRequired()) {
                 EventPublisher.publishEvent(new HangingDeadlock(new HangingDeadlockVO(lock.getId())));
             } else {
                 releaseLockRequestUseCase.call(new ConsumeReleaseLockDTO(dto.version(), lock.getId(), PROCESS));

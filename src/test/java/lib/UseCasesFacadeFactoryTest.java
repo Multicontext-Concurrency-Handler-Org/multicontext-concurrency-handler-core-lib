@@ -29,9 +29,9 @@ class UseCasesFacadeFactoryTest {
     IEventSubscriber eventSubscriberMock;
 
     @Nested
-    class MCHCoreFactoryCreateNullChecks {
+    class CoverageTests {
         @Test
-        @DisplayName("Create MCH Instance with default subscribers")
+        @DisplayName("It should be able to create MCH instance with default subscribers")
         void createInstanceDefaultSubscribers() {
             Assertions.assertThrows(MCHWrongAbstractionUsage.class, () -> {
                 MCHCoreFactory.create(
@@ -71,7 +71,7 @@ class UseCasesFacadeFactoryTest {
         }
 
         @Test
-        @DisplayName("Create MCH Instance with custom subscribers")
+        @DisplayName("It should be able to create MCH instance with custom subscribers")
         void createInstanceCustomSubscribers() {
             Assertions.assertThrows(MCHWrongAbstractionUsage.class, () -> {
                 MCHCoreFactory.create(
