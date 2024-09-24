@@ -7,7 +7,7 @@ import lib.subscribers.producer.IProducer;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class DomainEventProducerSubscriber implements IEventSubscriber {
+public class DomainEventDefaultSubscriber implements IEventSubscriber {
     private final IProducer domainEventProducer;
 
     @Override

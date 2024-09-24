@@ -25,11 +25,19 @@ public class EventPublisher {
             logger.error("Publishing error event " + errorEventVO.message());
         }
 
-        EventPublisher.subscribers.forEach(subscriber -> {
-            if(subscriber.isInterested(event.getType())) {
+        for(int i = 0; i < EventPublisher.subscribers.size(); i++) {
+            var subscriber = EventPublisher.subscribers.get(i);
+            if (subscriber.isInterested(event.getType())) {
                 subscriber.notify(event);
                 logger.debug(String.format("Notified IEventSubscriber %s", subscriber.getClass().getName()));
             }
-        });
+        }
+
+//        EventPublisher.subscribers.forEach(subscriber -> {
+//            if(subscriber.isInterested(event.getType())) {
+//                subscriber.notify(event);
+//                logger.debug(String.format("Notified IEventSubscriber %s", subscriber.getClass().getName()));
+//            }
+//        });
     }
 }

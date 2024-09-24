@@ -14,8 +14,6 @@ public class AcquireOpportunityUseCase extends MCHUseCase<ConsumeStateChangeEven
 
     @Override
     protected void execute(ConsumeStateChangeEventDTO request) {
-        this.validate(request);
-
         switch (request.event()) {
             case LOCK_CREATED -> request.locks().forEach(this.lockService::lockCreatedAcquireOpportunity);
             case LOCK_RELEASED -> request.locks().forEach(this.lockService::lockReleasedAcquireOpportunity);

@@ -5,7 +5,7 @@ import domain.services.LockService;
 import domain.services.ProcessService;
 import lib.configuration.PersistenceConfiguration;
 import lib.configuration.SubscribersConfiguration;
-import lib.subscribers.DomainEventProducerSubscriber;
+import lib.subscribers.DomainEventDefaultSubscriber;
 import lib.subscribers.producer.IProducer;
 import lib.usecase.UseCasesFacade;
 import lib.usecase.impls.AcquireLockRequestUseCase;
@@ -87,7 +87,7 @@ public final class MCHCoreFactory {
                     "If SubscribersConfiguration.useDefaultSubscriber equals true, SubscribersConfiguration.producer must not be null"
             );
 
-            EventPublisher.registerSubscribers(List.of(new DomainEventProducerSubscriber(subscribersConfiguration.producer())));
+            EventPublisher.registerSubscribers(List.of(new DomainEventDefaultSubscriber(subscribersConfiguration.producer())));
         } else {
             if(Objects.nonNull(subscribersConfiguration.producer())) {
                 logger.warn("SubscribersConfiguration.producer won't be used since SubscribersConfiguration.useDefaultSubscriber is false");

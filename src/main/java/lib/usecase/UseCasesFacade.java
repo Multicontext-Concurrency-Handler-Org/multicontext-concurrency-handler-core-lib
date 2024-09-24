@@ -1,7 +1,6 @@
 package lib.usecase;
 
 import lib.IMCHCore;
-import lib.exceptions.MCHConstraintViolationException;
 import lib.usecase.impls.AcquireLockRequestUseCase;
 import lib.usecase.impls.AcquireOpportunityUseCase;
 import lib.usecase.impls.DeadlockCleanupUseCase;
@@ -19,19 +18,19 @@ public class UseCasesFacade implements IMCHCore {
     private final ReleaseLockRequestUseCase releaseLockRequestUseCase;
     private final DeadlockCleanupUseCase deadlockCleanupUseCase;
 
-    public void consumeStateChange(ConsumeStateChangeEventDTO stateChangeEventDTO) throws MCHConstraintViolationException {
+    public void consumeStateChange(ConsumeStateChangeEventDTO stateChangeEventDTO) {
         acquireOpportunityUseCase.call(stateChangeEventDTO);
     }
 
-    public void consumeAcquireLock(ConsumeAcquireLockDTO acquireLockDTO) throws MCHConstraintViolationException {
+    public void consumeAcquireLock(ConsumeAcquireLockDTO acquireLockDTO) {
         acquireLockRequestUseCase.call(acquireLockDTO);
     }
 
-    public void consumeReleaseLock(ConsumeReleaseLockDTO releaseLockDTO) throws MCHConstraintViolationException {
+    public void consumeReleaseLock(ConsumeReleaseLockDTO releaseLockDTO) {
         releaseLockRequestUseCase.call(releaseLockDTO);
     }
 
-    public void consumeDeadlockCleanupEvent(ConsumeDeadlockCleanupEventDTO deadlockCleanupEventDTO) throws MCHConstraintViolationException {
+    public void consumeDeadlockCleanupEvent(ConsumeDeadlockCleanupEventDTO deadlockCleanupEventDTO) {
         deadlockCleanupUseCase.call(deadlockCleanupEventDTO);
     }
 }

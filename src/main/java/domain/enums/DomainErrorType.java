@@ -7,7 +7,7 @@ public enum DomainErrorType {
     INVALID_STATE("invalid_state"),
     MISSING_CONFIG("missing_config"),
     UNEXPECTED_EXCEPTION("unexpected_exception"),
-    WRONG_ABSTRACTION_USAGE("wrong_abstraction_usage");
+    INVALID_DATA("invalid_data");
 
     private final String code;
 
